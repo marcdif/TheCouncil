@@ -1,0 +1,20 @@
+name: TheCouncil
+version: 1.0
+author: Marc DiFilippo
+main: com.marcdif.thecouncil.TheCouncil
+api-version: '1.20'
+commands:
+  home:
+    description: Teleport player to their home
+  sethome:
+    description: Set a player's home location
+  namecolor:
+    description: Set a player's name color
+  chatcolor:
+    description: Set a player's chat color
+  back:
+    description: Teleport to last location
+  fw:
+    description: Launch a firework!
+  sortchest:
+    description: Sort the chest you're looking at

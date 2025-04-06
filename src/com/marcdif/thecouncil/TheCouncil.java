@@ -4,16 +4,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.marcdif.thecouncil.commands.*;
+import com.marcdif.thecouncil.utils.TpaUtil;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -26,6 +24,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class TheCouncil extends JavaPlugin implements Listener {
+    private static TheCouncil instance;
     private static HashMap<UUID, ChatColor> chatColors = new HashMap<>();
     private static HashMap<UUID, Location> backLocations = new HashMap<>();
     private long lastTime = -1;
@@ -33,6 +32,7 @@ public class TheCouncil extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         Bukkit.getLogger().info("THECOUNCIL PLUGIN STARTING UP!!!");
+        instance = this;
 
         File pluginFolder = new File("plugins/TheCouncil");
         if (!pluginFolder.exists()) pluginFolder.mkdir();
@@ -46,6 +46,9 @@ public class TheCouncil extends JavaPlugin implements Listener {
         getCommand("back").setExecutor(new BackCommand());
         getCommand("fw").setExecutor(new FireworkCommand());
         getCommand("sortchest").setExecutor(new SortChestCommand());
+        getCommand("tpa").setExecutor(new TpaCommand());
+        getCommand("tpaccept").setExecutor(new TpAcceptCommand());
+        getCommand("tpdeny").setExecutor(new TpDenyCommand());
 
         Bukkit.getPluginManager().registerEvents(this, this);
 
@@ -80,11 +83,16 @@ public class TheCouncil extends JavaPlugin implements Listener {
                     // If player is within 3 blocks of the health/hunger reset loc, set health and hunger to full
                     p.setHealth(20);
                     p.setFoodLevel(20);
+                    p.setSaturation(20);
                     p.getWorld().spawnParticle(Particle.HEART, p.getLocation().add(0,1,0), 5, 0.1, 0.1, 0.1);
                     p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PLAYER_BURP, 1f, 1f);
                 }
             }
         }, 0L, 20L);
+    }
+
+    public static TheCouncil getInstance() {
+        return instance;
     }
 
     /*
@@ -157,6 +165,12 @@ public class TheCouncil extends JavaPlugin implements Listener {
         Player p = event.getPlayer();
         loadPlayerChatColor(p);
         loadPlayerNameColor(p);
+    }
+
+    @EventHandler
+    public void onLogout(PlayerQuitEvent event) {
+        Player p = event.getPlayer();
+        TpaUtil.logout(p);
     }
 
     @EventHandler

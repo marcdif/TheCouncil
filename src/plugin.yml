@@ -18,3 +18,9 @@ commands:
     description: Launch a firework!
   sortchest:
     description: Sort the chest you're looking at
+  tpa:
+    description: Send a teleport request
+  tpaccept:
+    description: Accept a teleport request
+  tpdeny:
+    description: Deny a teleport request
